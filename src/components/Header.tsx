@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
-import img from "../assets/images/logo.png";
+import React, { useState, useEffect, useRef } from 'react';
+import img from '../assets/images/logo.png';
 
 export const Header: React.FC<any> = () => {
   const [sticky, setSticky] = useState({ isSticky: false, offset: 0 });
@@ -21,10 +21,10 @@ export const Header: React.FC<any> = () => {
       handleScroll(header.top, header.height);
     };
 
-    window.addEventListener("scroll", handleScrollEvent);
+    window.addEventListener('scroll', handleScrollEvent);
 
     return () => {
-      window.removeEventListener("scroll", handleScrollEvent);
+      window.removeEventListener('scroll', handleScrollEvent);
     };
   }, []);
 
@@ -32,15 +32,13 @@ export const Header: React.FC<any> = () => {
     <>
       <section style={{ marginTop: sticky.offset }}>
         <header
-          className={`header ${sticky.isSticky ? " sticky" : ""}`}
+          className={`header ${sticky.isSticky ? ' sticky' : ''}`}
           ref={headerRef}
         >
           <div>
             <div className="header__box">
               <div className="header__logo">
-                <p
-                  className="header__logo-text"
-                >
+                <p className="header__logo-text">
                   <img width="50" height="50" src={img} alt="logo" />
                 </p>
               </div>

@@ -1,6 +1,6 @@
-import React from "react";
-import img from "../assets/images/monkey.png";
-import { Link } from "react-router-dom";
+import React from 'react';
+import img from '../assets/images/monkey.png';
+import { Link } from 'react-router-dom';
 
 const NotFound: React.FC<any> = () => {
   return (

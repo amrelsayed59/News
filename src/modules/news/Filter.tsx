@@ -1,38 +1,19 @@
 import { useState } from 'react';
 import { Collapse } from 'reactstrap';
 import Select from 'react-select';
+import { CategoryOptions, TagOptions } from './model';
 
-const Filter: React.FC<any> = ({ filterState, setFilterState }) => {
+const Filter: React.FC<any> = ({
+  filterState,
+  setFilterState,
+  handleFilter,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
-
-  const searchBy = (value: any) => {
-    console.log('val', value);
-  };
-
-  //filter state
-  const [filter, setFilter] = useState({
-    categories: [],
-    tags: [],
-    fromMonth: [],
-    toMonth: [],
-    fromYear:[],
-    toYear: [],
-  });
-
-  interface SortBy {
-    value: string;
-    label: string;
-  }
 
   const sortBy: any = [
     { value: 'newest first', label: 'Newest first' },
     { value: 'oldest first', label: 'Oldest first' },
   ];
-
-  interface CategoryOptions {
-    value: string;
-    label: string;
-  }
 
   const categoryOptions: CategoryOptions[] = [
     { value: 'Products', label: 'Products' },
@@ -43,11 +24,6 @@ const Filter: React.FC<any> = ({ filterState, setFilterState }) => {
     { label: 'Vodafone Foundation news', value: 'Vodafone Foundation news' },
     { label: 'Public Policy news', value: 'Public Policy news' },
   ];
-
-  interface TagOptions {
-    value: string;
-    label: string;
-  }
 
   const tagOptions: TagOptions[] = [
     { label: '3G', value: '3G' },
@@ -62,11 +38,6 @@ const Filter: React.FC<any> = ({ filterState, setFilterState }) => {
     { label: 'Automotive', value: 'Automotive' },
     { label: 'Big data', value: 'Big data' },
   ];
-
-  interface MonthFull {
-    value: string;
-    label: string;
-  }
 
   const monthFull: any = [
     { label: 'January', value: 'January' },
@@ -91,15 +62,15 @@ const Filter: React.FC<any> = ({ filterState, setFilterState }) => {
     { label: '2019', value: '2019' },
     { label: '2020', value: '2020' },
     { label: '2021', value: '2021' },
-    { label: '2021', value: '2021' },
-  ]
+    { label: '2022', value: '2022' },
+  ];
 
   const handleChangeCategory = (event: any) => {
     let categories = event.map((item: CategoryOptions) => {
       return item.value;
     });
-    setFilter({
-      ...filter,
+    setFilterState({
+      ...filterState,
       categories,
     });
   };
@@ -108,26 +79,9 @@ const Filter: React.FC<any> = ({ filterState, setFilterState }) => {
     let tags = event.map((item: TagOptions) => {
       return item.value;
     });
-    setFilter({
-      ...filter,
-      tags,
-    });
-  };
-
-  // const handleChangeDate = ((e: any) => {
-  //     // let fromMonth = event.map((item: any) => {
-  //     //   return item.value;
-  //     // })
-  //     setFilterState({
-  //       ...filterState,
-  //       fromMonth: e.value,
-  //     });
-  // })
-
-  const applyFilter = () => {
     setFilterState({
       ...filterState,
-      ...filter,
+      tags,
     });
   };
 
@@ -164,11 +118,7 @@ const Filter: React.FC<any> = ({ filterState, setFilterState }) => {
                   autoComplete="off"
                 />
                 <div className="input-group-append">
-                  <button
-                    className="btn btn-outline-secondary"
-                    type="button"
-                    onClick={() => searchBy(filterState.search)}
-                  >
+                  <button className="btn btn-outline-secondary" type="button">
                     <i className="fa fa-search"></i>
                   </button>
                 </div>
@@ -182,7 +132,7 @@ const Filter: React.FC<any> = ({ filterState, setFilterState }) => {
                 defaultValue={sortBy.filter(
                   (obj: any) => obj.value === filterState.sort
                 )}
-                onChange={(e: any) => {
+                onChange={(e) => {
                   setFilterState({
                     ...filterState,
                     sort: e.value,
@@ -196,7 +146,6 @@ const Filter: React.FC<any> = ({ filterState, setFilterState }) => {
               <div className="collapse-item">
                 <label>Categories</label>
                 <Select
-                  // defaultValue={[colourOptions[2], colourOptions[3]]}
                   isMulti
                   name="colors"
                   options={categoryOptions}
@@ -210,7 +159,6 @@ const Filter: React.FC<any> = ({ filterState, setFilterState }) => {
               <div className="collapse-item">
                 <label>Tags</label>
                 <Select
-                  // defaultValue={[colourOptions[2], colourOptions[3]]}
                   isMulti
                   name="colors"
                   options={tagOptions}
@@ -230,7 +178,6 @@ const Filter: React.FC<any> = ({ filterState, setFilterState }) => {
                     classNamePrefix="selected"
                     className="basic-multi-select shadow-sm"
                     name="colors"
-                    defaultValue=""
                     onChange={(e: any) => {
                       setFilterState({
                         ...filterState,
@@ -240,18 +187,17 @@ const Filter: React.FC<any> = ({ filterState, setFilterState }) => {
                     placeholder="Month"
                   />
                   <Select
-                   options={allYears}
-                   classNamePrefix="selected"
-                   className="basic-multi-select shadow-sm"
-                   name="colors"
-                   defaultValue=""
-                   onChange={(e: any) => {
-                     setFilterState({
-                       ...filterState,
-                       fromYear: e.value,
-                     });
-                   }}
-                   placeholder="Year"
+                    options={allYears}
+                    classNamePrefix="selected"
+                    className="basic-multi-select shadow-sm"
+                    name="colors"
+                    onChange={(e: any) => {
+                      setFilterState({
+                        ...filterState,
+                        fromYear: e.value,
+                      });
+                    }}
+                    placeholder="Year"
                   />
                 </div>
               </div>
@@ -263,7 +209,6 @@ const Filter: React.FC<any> = ({ filterState, setFilterState }) => {
                     classNamePrefix="selected"
                     name="colors"
                     className="basic-multi-select shadow-sm"
-                    defaultValue=""
                     onChange={(e: any) => {
                       setFilterState({
                         ...filterState,
@@ -277,7 +222,6 @@ const Filter: React.FC<any> = ({ filterState, setFilterState }) => {
                     classNamePrefix="selected"
                     className="basic-multi-select shadow-sm"
                     name="colors"
-                    defaultValue=""
                     onChange={(e: any) => {
                       setFilterState({
                         ...filterState,
@@ -292,7 +236,7 @@ const Filter: React.FC<any> = ({ filterState, setFilterState }) => {
             <div className="d-flex justify-content-center pt-5">
               <button
                 className="btn btn-danger rounded-0 py-2"
-                onClick={applyFilter}
+                onClick={handleFilter}
               >
                 Apply Filters
               </button>

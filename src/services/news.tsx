@@ -1,25 +1,23 @@
 import { useEffect, useState } from 'react';
 import Axios from 'axios';
-import { useMainDispatch, useMainState } from '../context/gloabal';
+const newsList: string = process.env.REACT_APP_API_URL as string;
 
 const useFetchNews = () => {
-    const dispatch = useMainDispatch();
-    const useMain = useMainState();
-    const [result, setResult] = useState([]);
+  const [result, setResult] = useState([]);
 
-    const fetchNews = async () => {
-        const res = await Axios.get("http://localhost:3005/data");
-        const data = await res.data.searchAPISearch.documents.map((data: any) => data);
-        dispatch({type: "setNews", payload: data})
-    }
+  const fetchNews = async () => {
+    const res = await Axios.get(`${newsList}/data`);
+    const data = await res.data.searchAPISearch.documents.map(
+      (data: any) => data
+    );
+    setResult(data);
+  };
 
-    useEffect(() => {
-        dispatch({type: 'restNews', payload: []});
-        fetchNews();
-        setResult(useMain.ListNews);
-    }, []);
-    
-    return result;
-}
+  useEffect(() => {
+    fetchNews();
+  }, []);
+
+  return result;
+};
 
 export default useFetchNews;

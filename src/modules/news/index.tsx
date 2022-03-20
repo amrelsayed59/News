@@ -1,26 +1,17 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import useFetchNews from '../../services/news';
 import Filter from './Filter';
 import List from './List';
+import { FilterState, NewsItem } from './model';
+
+const pageSize: number = 3;
 
 const News: React.FC<any> = () => {
-  // let page_size: number = 5;
-  // let page_number: number = 1;
-
   const [pageNumber, setPageNumber] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
-  const [allLatestNews, setAllLatestNews] = useState([]);
-
-  interface Filter {
-    search: string;
-    sort: string;
-    categories: string[];
-    tags: string[];
-    date: Date | string;
-  }
+  const [allResult, setAllResult] = useState([]);
 
   //filter state
-  const [filterState, setFilterState] = useState<any>({
+  const [filterState, setFilterState] = useState<FilterState>({
     search: '',
     sort: 'newest first',
     categories: [],
@@ -33,23 +24,21 @@ const News: React.FC<any> = () => {
   });
 
   //fetch news from context
-  const fetchNews = useFetchNews();
-
-  // console.log('filterState', filterState);
+  const allNews = useFetchNews();
 
   //Filter by title
-  const filterTitle = ({ title }: any) => {
+  const filterTitle = ({ title }: NewsItem) => {
     return title.toLowerCase().indexOf(filterState.search.toLowerCase()) !== -1;
   };
 
   //Filter by category
-  const filterCategory = ({ category }: any) => {
+  const filterByCategory = ({ category }: NewsItem) => {
     if (filterState.categories.length === 0) return true;
     return filterState.categories.includes(category);
   };
 
   //Filter by Tags
-  const filterTags = ({ tags }: any) => {
+  const filterByTags = ({ tags }: NewsItem) => {
     if (filterState.tags.length === 0) return true;
     const containsAll = tags.some((element: any) => {
       return filterState.tags.includes(element);
@@ -58,77 +47,82 @@ const News: React.FC<any> = () => {
   };
 
   //Filtering From and to of date
-  function getFilterDate({createdTime}: any) {
-    if (filterState.date === '') return true;
-    console.log('filter date fromMonth',filterState.fromMonth)
-    console.log('filter date toMonth',filterState.toMonth)
-    console.log('filter date fromYear',filterState.fromYear)
-    console.log('filter date toYear',filterState.toYear)
+  function filterByDate({ createdTime }: NewsItem) {
+    const date1 =
+      new Date(`${filterState.fromYear}-${filterState.fromMonth}`).getTime() /
+      1000;
+    const date2 =
+      new Date(`${filterState.toYear}-${filterState.toMonth}`).getTime() / 1000;
+    const formatedDate = new Date(createdTime).getTime();
+    if (filterState.fromYear === '' && filterState.toYear === '') return true;
+    if (filterState.fromYear && !filterState.toYear)
+      return formatedDate >= date1;
+    if (!filterState.fromYear && filterState.toYear)
+      return formatedDate < date2;
+    if (filterState.fromYear && filterState.toYear)
+      return formatedDate > date1 && formatedDate < date2;
   }
 
-  const AllNews = fetchNews
-    .filter(filterTitle)
-    .filter(filterCategory)
-    .filter(filterTags)
-    .filter(getFilterDate)
-    .sort((a: any, b: any) => {
-      if (filterState.sort === 'oldest first') {
-        return a.createdTime - b.createdTime;
-      }
-      return b.createdTime - a.createdTime;
-    })
-    .map((item: any, index: number) => (
-      <List item={item} index={index} key={item.id} />
-    ));
-  // console.log('AllNews', AllNews);
-  const loadMore = () => {
-    let newItems = paginate(AllNews, pageSize, pageNumber);
-    if (newItems.length > 0) {
-      setPageNumber(pageNumber + 1);
-    }
-    let allItems: any = [...AllNews, ...newItems];
-    setAllLatestNews(allItems);
-
-    // console.log(AllNews);
-    // console.log(newItems);
-    // console.log('----', AllNews);
-
-    // if (AllNews.length === all)
+  const handleFilter = () => {
+    const filteredData = allNews
+      .filter(filterByCategory)
+      .filter(filterByTags)
+      .filter(filterByDate);
+    setAllResult(filteredData);
   };
-  // console.log('allLatestNews', allLatestNews);
 
-  function paginate(array: any, page_size: number, page_number: number) {
-    // human-readable page numbers usually start with 1, so we reduce 1 in the first argument
-    return array.slice((page_number - 1) * page_size, page_number * page_size);
-  }
+  const renderNews = () =>
+    allResult
+      .filter(filterTitle)
+      .sort((a: any, b: any) => {
+        if (filterState.sort === 'oldest first') {
+          return a.createdTime - b.createdTime;
+        }
+        return b.createdTime - a.createdTime;
+      })
+      .slice(0, pageSize * pageNumber)
+      .map((item: NewsItem, index: number) => (
+        <List item={item} index={index} key={item.id} />
+      ));
 
-  // function getFirstNews () {
-  //   setPageNumber(1);
-  //   loadMore();
-  // }
+  const loadMore = () => {
+    setPageNumber((prev) => prev + 1);
+  };
+
+  useEffect(() => {
+    setAllResult(allNews);
+  }, [allNews]);
 
   return (
     <>
-      <Filter filterState={filterState} setFilterState={setFilterState} />
+      <Filter
+        filterState={filterState}
+        setFilterState={setFilterState}
+        handleFilter={handleFilter}
+      />
       <div className="news-section">
         <div className="container-fluid">
           <div className="new-list">
-            {AllNews.length > 0 ? (
-              AllNews
+            {allResult.length > 0 ? (
+              renderNews()
             ) : (
               <p className="font-weight-bold text-secondary text-center">
                 No Result Found
               </p>
             )}
           </div>
-          <div className="d-flex justify-content-center">
-            <button
-              className="btn btn-danger rounded-0 py-2 my-3"
-              onClick={loadMore}
-            >
-              Load More
-            </button>
-          </div>
+          {allNews.length !==
+            allResult.slice(0, pageSize * pageNumber).length &&
+            allResult.length > 0 && (
+              <div className="d-flex justify-content-center">
+                <button
+                  className="btn btn-danger rounded-0 py-2 my-3"
+                  onClick={loadMore}
+                >
+                  Load More
+                </button>
+              </div>
+            )}
         </div>
       </div>
     </>

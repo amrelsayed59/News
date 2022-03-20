@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 
 const Loader: React.FC<any> = () => {
   const [percentLoaded, setPercentLoaded] = useState<number>(0);
@@ -19,7 +19,7 @@ const Loader: React.FC<any> = () => {
     <div className="determinate-loader">
       <div
         className="determinate-loader--bar"
-        style={{ width: percentLoaded + "%" }}
+        style={{ width: percentLoaded + '%' }}
       ></div>
     </div>
   );

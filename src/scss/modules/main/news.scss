@@ -1,16 +1,24 @@
 .news-section {
   padding-block: 2rem;
   .new-list {
-    display:flex;
+    display: flex;
     flex-wrap: wrap;
     padding-inline: 7rem;
+    @media (max-width: 575px) {
+      display: block;
+      padding: 0;
+    }
     .new-item {
       display: flex;
       // flex-wrap: wrap;
       flex-direction: column;
       max-width: 33.333333%;
       padding: 10px;
-      transition: all .5s cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+      @media (max-width: 575px) {
+        display: block;
+        max-width: 100%;
+      }
       &:hover {
         transform: scale(1.03);
       }
@@ -22,6 +30,9 @@
         .img-box {
           width: 66.66%;
           height: 425px;
+          @media (max-width: 575px) {
+            width: 100%;
+          }
         }
         .new-content {
           padding: 60px 30px;
@@ -29,6 +40,10 @@
           border-left: 4px solid rgb(230, 0, 0);
           flex: 1 1 auto;
           width: 33.34%;
+          @media (max-width: 575px) {
+            width: 100%;
+            padding: 30px;
+          }
         }
       }
       .img-box {
@@ -86,13 +101,23 @@
   }
 }
 
+//filter
 .filter-section {
   padding-inline: 7.5rem;
   padding-top: 3rem;
+  @media (max-width: 575px) {
+    padding-inline: 0;
+  }
   .filter-box {
     display: flex;
     justify-content: space-between;
+    @media (max-width: 575px) {
+      display: block;
+    }
     .all-filters {
+      @media (max-width: 575px) {
+        margin-bottom: 1rem;
+      }
       > button {
         background: white;
         border-width: 1px;
@@ -103,6 +128,7 @@
         border: 1px solid #999999;
         border-radius: 2px;
         font-weight: 700;
+        font-size: 16px;
       }
       i {
         margin-left: 50px;
@@ -110,11 +136,15 @@
     }
     .search-bar {
       width: 60%;
+      @media (max-width: 575px) {
+        margin-bottom: 1rem;
+      }
       input {
         outline: none;
         box-shadow: none;
         background: white;
         border-color: #6c757d;
+        color: #e60000;
       }
       .input-group-append {
         > button {
@@ -129,6 +159,10 @@
     .sort-news {
       > div {
         width: 150px;
+        @media (max-width: 575px) {
+          width: 100%;
+          margin-bottom: 1rem;
+        }
       }
       .selected__control {
         cursor: pointer;
